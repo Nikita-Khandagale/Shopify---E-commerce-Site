@@ -1,0 +1,83 @@
+{% extends 'ShopifyApp/Base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Add Category</title>
+
+<!-- Page Custom Styles -->
+<style>
+  /* Light background for entire page */
+  body {
+    background: #f8f9fa;
+  }
+
+  /* Card styling */
+  .card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 1rem;
+  }
+
+  /* Label styling */
+  .form-label {
+    font-weight: 500;
+  }
+
+  /* Button default color */
+  .btn-primary {
+    background-color: #5c6ac4;
+    border: none;
+  }
+
+  /* Button hover effect */
+  .btn-primary:hover {
+    background-color: #3f51b5;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<!-- Main container -->
+<div class="container mt-5">
+
+  <div class="row justify-content-center">
+
+    <div class="col-md-6">
+
+      <!-- Form Card -->
+      <div class="card p-4">
+
+        <!-- Card Title -->
+        <h3 class="text-center text-success mb-3">Add Category</h3>
+
+        <!-- Success Message -->
+        {% if flag %}
+        <div class="alert alert-success text-center" role="alert">
+          Category saved to DB!
+        </div>
+        {% endif %}
+
+        <!-- Category Form -->
+        <form action="" method="POST">
+          {% csrf_token %}
+
+          <!-- Category Input Field -->
+          <div class="form-group mb-3">
+            <label for="email" class="form-label">Category Name</label>
+            <input type="text" class="form-control" name="cname" placeholder="Enter category name">
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center">
+            <button type="submit" class="btn btn-success px-4 py-2">Add Category</button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

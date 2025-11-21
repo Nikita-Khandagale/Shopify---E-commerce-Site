@@ -1,0 +1,153 @@
+{% extends 'ShopifyApp/base.html' %}
+{% load static %}
+
+{% block head %}
+<title>index</title>
+
+
+{% endblock %}
+
+
+{% block body %}
+
+<main role="main">
+
+  <!-- ================================
+       USER SECTION (PROFILE/JUMBOTRON)
+       ================================ -->
+  {% if user.is_authenticated %}
+
+      {% if user.is_seller %}
+      <!-- Seller View -->
+      <section class="jumbotron text-center jumbotron-custom">
+        <div class="container">
+          <h3>{{ user.username }}</h3>
+
+          <img src="{{ user.userprofile.image.url }}" alt="missing image" width="200" height="200">
+
+          <br><br>
+
+          <a href="{% url 'userapp:edit-profile' %}" class="btn btn-primary my-2">Edit Profile</a>
+          <a href="{% url 'userapp:delete-profile' %}" class="btn btn-danger my-2">Delete Profile</a>
+
+          <p class="btn-group-custom">
+            <hr>
+            <a href="{% url 'app:create-product' %}" class="btn btn-primary my-2">Add Product</a>
+            <a href="{% url 'app:create-category' %}" class="btn btn-secondary my-2">Add Product Category</a>
+          </p>
+
+        </div>
+      </section>
+
+      {% else %}
+      <!-- Normal User -->
+      <section class="jumbotron text-center jumbotron-custom">
+        <div class="container">
+          <h3>{{ user.username }}</h3>
+
+          <img src="{{ user.userprofile.image.url }}" alt="missing image" width="200" height="200">
+
+          <br><br>
+
+          <a href="{% url 'userapp:edit-profile' %}" class="btn btn-primary my-2">Edit Profile</a>
+          <a href="{% url 'userapp:delete-profile' %}" class="btn btn-danger my-2">Delete Profile</a>
+        </div>
+      </section>
+      {% endif %}
+
+  {% else %}
+      <!-- Guest (Not Logged In) -->
+      <section class="jumbotron text-center jumbotron-custom">
+        <div class="container">
+          <h2>Welcome to ShopifyApp</h2>
+        </div>
+      </section>
+  {% endif %}
+
+
+  <!-- ======================
+       PRODUCT LIST SECTION
+       ====================== -->
+  <div class="album py-5 bg-light">
+    <div class="container">
+
+      <div class="row">
+
+        {% for product in products %}
+        <div class="col-md-4">
+
+          <div class="card mb-4 shadow-sm">
+
+            <img class="bd-placeholder-img card-img-top" 
+                 src="{{ product.image.url }}" 
+                 alt="Thumbnail" 
+                 width="100%" height="225">
+
+            <div class="card-body">
+
+              <h3>{{ product.name }}</h3>
+              <hr>
+
+              <p>Original Price ₹: {{ product.original_price }}</p>
+              <p style="color: red;">Discount Price ₹: {{ product.discount_percentage }}%</p>
+              <p><b>Selling Price ₹: {{ product.selling_price }}</b></p>
+
+              <hr>
+
+              <p class="card-text">
+                {{ product.discription | truncatechars:20 }}
+                <a href="{% url 'app:view-product' product.id %}">more</a>
+              </p>
+
+              <div class="d-flex justify-content-between align-items-center">
+
+                <div class="btn-group">
+
+                  <a href="{% url 'app:view-product' product.id %}" 
+                     class="btn btn-sm btn-outline-success">view</a>
+
+                  &nbsp;
+
+                  {% if user.is_authenticated %}
+                      {% if user.id == product.user.id and user.is_seller %}
+                          <a href="{% url 'app:edit-product' product.id %}" 
+                             class="btn btn-sm btn-outline-warning">Edit</a>
+                          &nbsp;
+                          <a href="{% url 'app:delete-product' product.id %}" 
+                             class="btn btn-sm btn-outline-danger">Delete</a>
+                          &nbsp;
+                      {% endif %}
+                  {% endif %}
+
+                </div>
+
+                <small class="text-muted">9 mins</small>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+
+<!-- ======================
+     FOOTER
+     ====================== -->
+<footer class="text-muted">
+  <div class="container">
+    <p class="float-right"><a href="#">Back to top</a></p>
+    <p>&copy; ShopifyApp</p>
+    <p>New to Bootstrap? <a href="/">Visit the homepage</a></p>
+  </div>
+</footer>
+
+{% endblock %}

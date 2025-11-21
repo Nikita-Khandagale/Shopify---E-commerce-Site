@@ -1,0 +1,16 @@
+{% extends 'ShopifyApp/base.html' %}
+
+{% block head %}
+    <title>Delete Product</title>
+{% endblock %}
+
+{% block body %}
+
+    <h1>Are You Sure That You want to delete this product::{{product.name}} ???</h1>
+
+    <form action="" method="post">{% csrf_token %}
+        <button type="submit" style="border: none; background: none;">Yes I'am Sure</button>
+    </form>
+
+    <a href="{% url 'app:view-product' product.id %}">No,Take Me Back</a>
+{% endblock %}

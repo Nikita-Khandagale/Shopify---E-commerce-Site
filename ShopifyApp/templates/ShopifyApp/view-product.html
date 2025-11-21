@@ -1,0 +1,192 @@
+{% extends 'ShopifyApp/base.html' %}
+{% load static %}
+
+{% block head %}
+
+<title>View-Product</title>
+
+<!-- General Placeholder Image CSS -->
+<style>
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+</style>
+
+{% endblock %}
+
+
+{% block body %}
+
+<main role="main">
+
+  <!-- Custom Jumbotron Styling -->
+  <style>
+    .jumbotron-custom {
+      background-image: url("{% static 'ShopifyApp/images/shop3.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: rgb(243, 232, 232);
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+      margin-top: 20px;
+    }
+
+    /* Button group inside jumbotron */
+    .jumbotron-custom .btn-group-custom {
+      margin-left: 30px;
+      margin-top: 80px;
+      margin-bottom: 0%;
+    }
+  </style>
+
+
+
+  <!-- -------------------- JUMBOTRON SECTION -------------------- -->
+
+  {% if user.is_authenticated %}
+  {% if user.is_seller %}
+
+  <!-- Jumbotron for Seller -->
+  <section class="jumbotron text-center jumbotron-custom">
+    <div class="container">
+      <h1></h1>
+      <h2></h2>
+
+      <!-- Buttons for sellers -->
+      <p class="btn-group-custom">
+        <a href="{% url 'app:create-product' %}" class="btn btn-primary my-2">Add Product</a>
+        <a href="{% url 'app:create-category' %}" class="btn btn-secondary my-2">Add Product Category</a>
+      </p>
+    </div>
+  </section>
+
+  {% else %}
+
+  <!-- Jumbotron for normal logged-in users -->
+  <section class="jumbotron text-center jumbotron-custom">
+    <div class="container">
+      <h1></h1>
+      <h2></h2>
+    </div>
+  </section>
+
+  {% endif %}
+
+  {% else %}
+
+  <!-- Jumbotron for guests -->
+  <section class="jumbotron text-center jumbotron-custom">
+    <div class="container">
+      <h1></h1>
+      <h2></h2>
+    </div>
+  </section>
+
+  {% endif %}
+
+
+
+  <!-- -------------------- PRODUCT DETAILS SECTION -------------------- -->
+
+  <div class="album py-5 bg-light">
+    <div class="container">
+
+      <div class="row justify-content-center">
+
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+
+            <!-- Product Image -->
+            <img class="bd-placeholder-img card-img-top" src="{{ product.image.url }}" alt="Thumbnail" width="100%"
+              height="225">
+
+            <div class="card-body">
+
+              <!-- Product Title -->
+              <h3>{{ product.name }}</h3>
+              <hr>
+
+              <!-- Prices -->
+              <p>Original Price ₹: {{ product.original_price }}</p>
+              <p style="color: red;">Discount Price ₹: {{ product.discount_percentage }} %</p>
+              <p><b>Selling Price ₹: {{ product.selling_price }}</b></p>
+              <hr>
+
+              <!-- Product Description -->
+              <p class="card-text">{{ product.discription }}</p>
+
+              <!-- Buttons (Back, Add to Cart, Edit/Delete option) -->
+              <div class="d-flex justify-content-between align-items-center">
+
+                <div class="btn-group">
+
+                  <!-- Back Button -->
+                  <a href="{% url 'app:home' %}" class="btn btn-sm btn-outline-success">Back</a>
+                  &nbsp;
+
+                  <!-- Add to Cart -->
+                  <a href="{% url 'app:add-to-cart' product.id %}" class="btn btn-sm btn-outline-success">Add To
+                    Cart</a>
+
+                  <!-- ❤️ Add to Wishlist -->
+                  <a href="{% url 'app:add-wishlist' product.id %}" class="btn btn-sm btn-outline-danger">
+                    ❤️ Add to Wishlist
+                  </a>
+                  &nbsp;
+
+                  <!-- Seller Options: Edit & Delete -->
+                  {% if user.is_authenticated %}
+                  {% if user.id == product.user.id %}
+                  {% if user.is_seller %}
+                  &nbsp;
+                  <a href="{% url 'app:edit-product' product.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                  &nbsp;
+                  <a href="{% url 'app:delete-product' product.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                  &nbsp;
+                  {% endif %}
+                  {% endif %}
+                  {% endif %}
+
+                </div>
+
+                <!-- <small class="text-muted">9 mins</small> -->
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+
+<!-- -------------------- FOOTER -------------------- -->
+
+<footer class="text-muted">
+  <div class="container">
+    <p class="float-right">
+      <a href="#">Back to top</a>
+    </p>
+    <p>&copy; ShopifyApp</p>
+    <p>
+      New to Bootstrap?
+      <a href="/">Visit the homepage</a>
+      or read our
+      <a href="/docs/4.6/getting-started/introduction/">getting started guide</a>.
+    </p>
+  </div>
+</footer>
+
+{% endblock %}

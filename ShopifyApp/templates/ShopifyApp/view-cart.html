@@ -1,0 +1,92 @@
+{% extends 'ShopifyApp/base.html' %}
+{% load static %}
+
+{% block head %}
+<title>ShopifyApp - Cart</title>
+
+<style>
+    .cart-item-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        transition: 0.3s;
+    }
+    .cart-item-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transform: scale(1.02);
+    }
+    .cart-img {
+        border-radius: 10px;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+    {% if cart_items %}
+    
+        {% for item in cart_items %}
+        <div class="cart-item-card">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-3 text-center">
+                    <img src="{{ item.product.image.url }}" 
+                         alt="Product Image Missing" 
+                         height="120" width="120" class="cart-img">
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="text-primary">{{ item.product.name }}</h3>
+                    <p class="mb-1"><strong>Quantity:</strong> {{ item.quantity }}</p>
+                    <p class="mb-1"><strong>Price:</strong> ₹{{ item.product.selling_price }}</p>
+                </div>
+
+                <div class="col-md-3 text-center">
+                    <div class="btn-group mb-2">
+
+                        <!-- Decrease -->
+                        <a href="{% url 'ShopifyApp:cart_sub' item.id %}" 
+                           class="btn btn-outline-secondary btn-sm">-</a>
+
+                        <!-- Increase (fix: previously wrong ID was used) -->
+                        <a href="{% url 'ShopifyApp:cart_add' item.id %}" 
+                           class="btn btn-outline-secondary btn-sm">+</a>
+
+                        <!-- Remove -->
+                        <a href="{% url 'ShopifyApp:cart_remove' item.id %}" 
+                           class="btn btn-danger btn-sm">Remove</a>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+{% if cart_items %}
+  <div class="text-right mt-3">
+    <a href="{% url 'app:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+  </div>
+{% endif %}
+
+        {% endfor %}
+
+    {% else %}
+
+        <!-- Empty Cart Message -->
+        <div class="text-center mt-5">
+            <h3 class="text-muted">🛒 Your cart is empty</h3>
+            <p>Add some products to continue shopping!</p>
+            <a href="{% url 'app:home' %}" class="btn btn-primary mt-3">Go to Home</a>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

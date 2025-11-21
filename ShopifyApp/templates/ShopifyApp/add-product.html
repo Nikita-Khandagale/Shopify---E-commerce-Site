@@ -1,0 +1,13 @@
+{% extends 'shopifyapp/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<div class="container mt-4">
+    <h3>Add Product</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends 'ShopifyApp/base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Search</title>
+
+<!-- -------------------------------------------------------
+     BASIC DEFAULT IMAGE PLACEHOLDER STYLING
+-------------------------------------------------------- -->
+<style>
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+
+
+{% block body %}
+
+<main role="main">
+
+  <!-- -------------------------------------------------------
+       HERO / JUMBOTRON IMAGE AT TOP
+  -------------------------------------------------------- -->
+  <style>
+    .jumbotron-custom {
+      width: 100%;
+      height: 180px;                    /* Short height */
+      background-image: url("{% static 'ShopifyApp/images/shop3.jpg' %}");
+      background-size: cover;           /* Fit wide display */
+      background-position: center;
+      background-repeat: no-repeat;
+
+      border-radius: 10px;
+      margin-top: 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+  </style>
+
+
+  <!-- -------------------------------------------------------
+       DIFFERENT VIEW FOR SELLER / CUSTOMER / NON-LOGGED USER
+  -------------------------------------------------------- -->
+  {% if user.is_authenticated %}
+      {% if user.is_seller %}
+          <!-- Seller View -->
+          <section class="jumbotron text-center jumbotron-custom">
+            <div class="container">
+              <h1></h1>
+              <h2></h2>
+
+              <p class="btn-group-custom">
+                <a href="{% url 'app:create-product' %}" class="btn btn-primary my-2">Add Product</a>
+                <a href="{% url 'app:create-category' %}" class="btn btn-secondary my-2">Add Product Category</a>
+              </p>
+            </div>
+          </section>
+
+      {% else %}
+          <!-- Normal User View -->
+          <section class="jumbotron text-center jumbotron-custom">
+            <div class="container">
+              <h1></h1>
+              <h2></h2>
+            </div>
+          </section>
+      {% endif %}
+
+  {% else %}
+      <!-- Not Logged In View -->
+      <section class="jumbotron text-center jumbotron-custom">
+        <div class="container">
+          <h1></h1>
+          <h2></h2>
+        </div>
+      </section>
+  {% endif %}
+
+
+
+  <!-- -------------------------------------------------------
+       PRODUCT LISTING SECTION
+  -------------------------------------------------------- -->
+  <div class="album py-5 bg-light">
+    <div class="container">
+      <div class="row">
+
+        <!-- Loop through searched products -->
+        {% for product in search_list %}
+
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+
+            <!-- Product Image -->
+            <img class="bd-placeholder-img card-img-top"
+                 src="{{ product.image.url }}"
+                 alt="Thumbnail"
+                 width="100%"
+                 height="225">
+
+            <div class="card-body">
+
+              <!-- Product Details -->
+              <h3>{{ product.name }}</h3>
+              <hr>
+              <p>Original Price ₹: {{ product.original_price }}</p>
+              <p style="color: red;">Discount Price ₹: {{ product.discount_percentage }}%</p>
+              <p><b>Selling Price ₹: {{ product.selling_price }}</b></p>
+              <hr>
+
+              <!-- Short description + link -->
+              <p class="card-text">
+                {{ product.discription | truncatechars:20 }}
+                <a href="{% url 'app:view-product' product.id %}">more</a>
+              </p>
+
+              <!-- Buttons -->
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+
+                  <!-- View button -->
+                  <a href="{% url 'app:view-product' product.id %}"
+                     class="btn btn-sm btn-outline-success">view</a>
+
+                  &nbsp;
+
+                  <!-- Seller-specific buttons -->
+                  {% if user.is_authenticated %}
+                    {% if user.id == product.user.id %}
+                      {% if user.is_seller %}
+                        
+                        <!-- Edit -->
+                        <a href="{% url 'app:edit-product' product.id %}"
+                           class="btn btn-sm btn-outline-warning">Edit</a>
+
+                        &nbsp;
+
+                        <!-- Delete -->
+                        <a href="{% url 'app:delete-product' product.id %}"
+                           class="btn btn-sm btn-outline-danger">Delete</a>
+
+                        &nbsp;
+
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+
+                </div>
+
+                <small class="text-muted">9 mins</small>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+
+
+<!-- -------------------------------------------------------
+     FOOTER
+-------------------------------------------------------- -->
+<footer class="text-muted">
+  <div class="container">
+    <p class="float-right">
+      <a href="#">Back to top</a>
+    </p>
+    <p>&copy; ShopifyApp</p>
+    <p>
+      New to Bootstrap?
+      <a href="/">Visit the homepage</a> or read our
+      <a href="/docs/4.6/getting-started/introduction/">getting started guide</a>.
+    </p>
+  </div>
+</footer>
+
+{% endblock %}

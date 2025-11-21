@@ -1,0 +1,199 @@
+{% extends 'ShopifyApp/base.html' %}
+{% block body %}
+
+<style>
+/* PAGE WRAPPER */
+.container {
+    max-width: 1200px;
+}
+
+/* CARD DESIGN */
+.card {
+    border-radius: 12px;
+    border: none;
+    background: #ffffff;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.card h5 {
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* ADDRESS RADIO STYLING */
+.form-check {
+    background: #f7f9fc;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.form-check:hover {
+    background: #eef5ff;
+}
+
+.form-check-input {
+    transform: scale(1.2);
+    margin-right: 8px;
+}
+
+/* INPUT FIELDS */
+.form-control {
+    border-radius: 8px;
+    padding: 8px 12px;
+    border: 1px solid #cfd6e1;
+    transition: 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #0a74da;
+    box-shadow: 0 0 6px rgba(10,116,218,0.3);
+}
+
+/* PAYMENT METHOD */
+.form-check-label {
+    cursor: pointer;
+    font-size: 15px;
+}
+
+/* BUTTON */
+.btn-success {
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px 0;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+/* ORDER SUMMARY */
+.border-bottom {
+    padding-bottom: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.order-item {
+    background: #f9fafc;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.order-item strong {
+    font-size: 15px;
+}
+
+/* TOTAL PRICE */
+.text-right h4 {
+    font-weight: 700;
+    color: #0a74da;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    h2 {
+        text-align: center;
+    }
+
+    .btn-success {
+        font-size: 16px;
+    }
+
+    .order-item {
+        font-size: 14px;
+    }
+}
+</style>
+
+<div class="container mt-4">
+  <h2 class="mb-4">Checkout</h2>
+  <div class="row">
+
+    <!-- Left: Address -->
+    <div class="col-md-5">
+      <div class="card p-3 mb-3">
+        <h5>Select Address</h5>
+        {% for addr in addresses %}
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="address_id"
+                   id="addr{{ addr.id }}" value="{{ addr.id }}"
+                   form="checkoutForm" {% if forloop.first %}checked{% endif %}>
+            <label class="form-check-label" for="addr{{ addr.id }}">
+              {{ addr.full_name }} — {{ addr.line1 }}, {{ addr.city }} ({{ addr.postal_code }}) — {{ addr.phone }}
+            </label>
+          </div>
+        {% empty %}
+          <p class="text-muted">No saved addresses.</p>
+        {% endfor %}
+      </div>
+
+      <div class="card p-3 mb-3">
+        <h5>Add New Address</h5>
+        <form id="checkoutForm" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="address_id" id="address_id">
+
+          <div class="mb-2"><input class="form-control" name="full_name" placeholder="Full name" required></div>
+          <div class="mb-2"><input class="form-control" name="phone" placeholder="Phone" required></div>
+          <div class="mb-2"><input class="form-control" name="line1" placeholder="Address line 1" required></div>
+          <div class="mb-2"><input class="form-control" name="line2" placeholder="Address line 2 (optional)"></div>
+          <div class="mb-2"><input class="form-control" name="city" placeholder="City" required></div>
+          <div class="mb-2"><input class="form-control" name="state" placeholder="State"></div>
+          <div class="mb-2"><input class="form-control" name="postal_code" placeholder="Postal code" required></div>
+          <div class="mb-2"><input class="form-control" name="country" placeholder="Country" value="India"></div>
+
+          <h6 class="mt-3">Payment Method</h6>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payment_method" id="pm1" value="COD" checked>
+            <label class="form-check-label" for="pm1">Cash on Delivery (COD)</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payment_method" id="pm2" value="RAZORPAY">
+            <label class="form-check-label" for="pm2">Pay Online (Razorpay)</label>
+          </div>
+
+          <div class="mt-3">
+            <button type="submit" class="btn btn-success">Place Order</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div class="col-md-7">
+      <div class="card p-3">
+        <h5>Order Summary</h5>
+
+        {% for item in cart_items %}
+          <div class="order-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ item.product.name }}</strong><br>
+                Qty: {{ item.quantity }}
+              </div>
+              <div>
+                ₹{{ item.product.selling_price }} × {{ item.quantity }} 
+                = <strong>₹{{ item.total_price }}</strong>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+        <div class="text-right mt-3">
+          <h4>Total: ₹{{ total }}</h4>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Update hidden input when selecting a saved address
+document.querySelectorAll('input[name="address_id"]').forEach(r => {
+  r.addEventListener('change', function() {
+    document.getElementById('address_id').value = this.value;
+  });
+});
+</script>
+
+{% endblock %}

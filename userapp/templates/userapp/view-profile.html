@@ -1,0 +1,11 @@
+{% extends 'ShopifyApp/base.html' %}
+{% block body %}
+<div class="container mt-5 text-center">
+  <h2>{{ request.user.username }}'s Profile</h2>
+  <img src="{{ profile.image.url }}" alt="Profile Picture" width="150" height="150" class="rounded-circle mb-3">
+  <p><strong>Name:</strong> {{ request.user.first_name }} {{ request.user.last_name }}</p>
+  <p><strong>Email:</strong> {{ request.user.email }}</p>
+  <a href="{% url 'userapp:edit-profile' %}" class="btn btn-warning mx-2">Edit Profile</a>
+  <a href="{% url 'userapp:delete-profile' %}" class="btn btn-danger mx-2">Delete Profile</a>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'ShopifyApp/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+<title>Login</title>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        font-family: "Poppins", sans-serif;
+    }
+
+    .login-container {
+        max-width: 450px;
+        margin: 70px auto;
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .card {
+        border-radius: 18px !important;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: #1976d2 !important;
+        border-bottom: none;
+    }
+
+    .card-header h3 {
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .card-body {
+        background: #ffffff !important;
+        padding: 35px;
+    }
+
+    .btn-primary {
+        border-radius: 30px;
+        padding: 10px 40px;
+        font-size: 16px;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0d47a1;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Smooth fade animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+<div class="login-container">
+
+    <div class="card shadow-lg border-0">
+        <div class="card-header text-white text-center py-4">
+            <h3 class="mb-0">User Login</h3>
+        </div>
+
+        <div class="card-body">
+
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        Login
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

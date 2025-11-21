@@ -1,0 +1,250 @@
+<style>
+/* ================= NAVBAR STYLING ================= */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #ffffff;
+    padding: 12px 25px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.07);
+    transition: all 0.3s ease;
+}
+
+/* When scrolling */
+.navbar.scrolled {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    background: #ffffff;
+}
+
+/* Brand Logo */
+.navbar-brand {
+    font-size: 30px;
+    font-weight: 700;
+    color: #28a745 !important;   /* GREEN COLOR */
+    display: flex;
+    align-items: center;
+}
+.navbar-brand i {
+    margin-right: 8px;
+    font-size: 32px;
+    color: #28a745 !important;   /* GREEN ICON */
+}
+
+/* Navbar Links */
+.navbar-nav .nav-link {
+    font-size: 17px;
+    font-weight: 500;
+    color: #333 !important;
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #28a745 !important;  /* GREEN HOVER */
+    transform: translateY(-2px);
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    background: #ffffff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+}
+.dropdown-item {
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+.dropdown-item:hover {
+    background-color: #28a745 !important;
+    color: #ffffff !important;  /* TEXT WHITE */
+}
+
+/* Category search input */
+#categorySearch {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+/* Search Input */
+.search-input {
+    border-radius: 20px;
+    padding: 6px 15px;
+    border: 1px solid #ced4da;
+    transition: 0.3s;
+}
+.search-input:focus {
+    outline: none;
+    border-color: #28a745 !important;   /* GREEN */
+    box-shadow: 0 0 4px rgba(40,167,69,0.4);
+}
+
+/* Profile image hover effect */
+.nav-link img {
+    transition: 0.3s;
+}
+.nav-link:hover img {
+    box-shadow: 0 0 10px rgba(40,167,69,0.6);   /* GREEN SHADOW */
+}
+
+/* Wishlist badge */
+.badge {
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+/* Toggler button */
+.navbar-toggler {
+    border-radius: 5px;
+    border-color: #28a745 !important;
+}
+.navbar-toggler-icon {
+    filter: brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(438%) hue-rotate(84deg) brightness(96%) contrast(95%);
+}
+</style>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+    <a class="navbar-brand" href="#">
+        <i class="fa-brands fa-shopify"></i> Shopify
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <!-- LEFT SIDE -->
+        <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'app:home' %}">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+            </li>
+
+            <!-- Category Dropdown -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa-solid fa-layer-group"></i> Categories
+                </a>
+
+                <div class="dropdown-menu">
+                    <input type="text" id="categorySearch" placeholder="Search category..." onkeyup="filterCategories()">
+
+                    <div id="categoryList">
+                        {% for category in categories %}
+                        <a class="dropdown-item" href="{% url 'app:category-search' category.id %}">
+                            {{ category.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+
+        <!-- RIGHT SIDE -->
+        <ul class="navbar-nav ml-auto d-flex align-items-center">
+
+            <!-- Search -->
+            <form action="{% url 'app:search-product' %}" method="POST" class="form-inline mr-3">
+                {% csrf_token %}
+                <input type="search" name="search" class="form-control search-input" placeholder="Search">
+            </form>
+
+            {% if user.is_authenticated %}
+
+            <!-- USER DROPDOWN -->
+            <li class="nav-item dropdown">
+
+                <a class="nav-link dropdown-toggle d-flex align-items-center" data-toggle="dropdown" style="cursor:pointer;">
+
+                    {% if user.userprofile and user.userprofile.image.url and user.userprofile.image.url != '/media/profile_pic/default.jpg' %}
+                        <img src="{{ user.userprofile.image.url }}" class="rounded-circle mr-2" width="35" height="35" style="object-fit: cover;">
+                    {% else %}
+                        <i class="fa-solid fa-user-circle fa-lg mr-2"></i>
+                    {% endif %}
+
+                    {{ user.username }}
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="{% url 'app:user-product' user.id %}">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                    <a class="dropdown-item" href="{% url 'app:order-list' %}">
+                        <i class="fa-solid fa-box"></i> My Orders
+                    </a>
+                    <a class="dropdown-item" href="{% url 'app:view-wishlist' %}">
+                        <i class="fa-solid fa-heart"></i> Wishlist
+                        {% if wishlist_count > 0 %}
+                        <span class="badge bg-danger">{{ wishlist_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a class="dropdown-item" href="{% url 'app:view-cart' %}">
+                        <i class="fa-solid fa-cart-shopping"></i> Cart
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <form action="{% url 'userapp:logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button class="dropdown-item">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </li>
+
+            {% else %}
+
+            <!-- Login -->
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'userapp:login' %}">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </a>
+            </li>
+
+            <!-- Register -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa-solid fa-user-plus"></i> Register
+                </a>
+
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'userapp:register' 'seller' %}">SELLER</a>
+                    <a class="dropdown-item" href="{% url 'userapp:register' 'buyer' %}">BUYER</a>
+                </div>
+            </li>
+
+            {% endif %}
+
+        </ul>
+
+    </div>
+</nav>
+
+<script>
+/* Navbar scroll shadow */
+window.addEventListener("scroll", function () {
+    document.querySelector(".navbar").classList.toggle("scrolled", window.scrollY > 20);
+});
+
+/* Category filter */
+function filterCategories() {
+    var input = document.getElementById("categorySearch").value.toUpperCase();
+    var items = document.querySelectorAll("#categoryList a");
+    items.forEach(function (a) {
+        a.style.display = a.textContent.toUpperCase().includes(input) ? "" : "none";
+    });
+}
+</script>

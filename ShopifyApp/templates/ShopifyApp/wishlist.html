@@ -1,0 +1,36 @@
+{% extends 'ShopifyApp/base.html' %}
+{% load static %}
+
+{% block body %}
+
+<h2>Your Wishlist</h2>
+
+{% if wishlist %}
+<table class="table table-striped">
+    <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+
+    {% for item in wishlist %}
+    <tr>
+        <td>{{ item.product.name }}</td>
+        <td>₹{{ item.product.selling_price }}</td>
+        <td>
+            <a href="{% url 'app:remove-wishlist' item.id %}" class="btn btn-danger btn-sm">
+                Remove
+            </a>
+            <a href="{% url 'app:add-to-cart' item.product.id %}" class="btn btn-success btn-sm">
+                Add to Cart
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+<p>No items in wishlist.</p>
+{% endif %}
+
+{% endblock %}

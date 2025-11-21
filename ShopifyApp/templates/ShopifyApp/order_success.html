@@ -1,0 +1,9 @@
+{% extends 'ShopifyApp/base.html' %}
+{% block body %}
+<div class="container mt-4 text-center">
+  <h2>Order Placed Successfully!</h2>
+  <p>Your order # is <strong>{{ order.id }}</strong></p>
+  <a href="{% url 'app:order-list' %}" class="btn btn-primary mt-2">View Orders</a>
+  <a href="{% url 'app:home' %}" class="btn btn-outline-secondary mt-2">Continue Shopping</a>
+</div>
+{% endblock %}

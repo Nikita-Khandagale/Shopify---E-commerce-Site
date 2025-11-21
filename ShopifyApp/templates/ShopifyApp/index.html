@@ -1,0 +1,162 @@
+{% extends 'ShopifyApp/base.html' %}
+{% load static %}
+
+{% block head %}
+<title>index</title>
+
+<!-- Basic image placeholder styling -->
+<style>
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<main role="main">
+
+  <!-- Jumbotron styling (short height + long width) -->
+  <style>
+    .jumbotron-custom {
+      width: 100%;
+      height: 180px; /* Short height as you wanted */
+
+      background-image: url("{% static 'ShopifyApp/images/shop3.jpg' %}");
+      background-size: cover;         /* Long width effect */
+      background-position: center;
+      background-repeat: no-repeat;
+
+      border-radius: 10px;
+      margin-top: 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+  </style>
+
+  <!-- Jumbotron Section (Seller / Buyer / Guest ) -->
+  {% if user.is_authenticated %}
+    {% if user.is_seller %}
+      <section class="jumbotron text-center jumbotron-custom">
+        <div class="container">
+          <h1></h1>
+          <h2></h2>
+
+          <!-- Buttons only for sellers -->
+          <p class="btn-group-custom">
+            <a href="{% url 'app:create-product' %}" class="btn btn-primary my-2">Add Product</a>
+            <a href="{% url 'app:create-category' %}" class="btn btn-secondary my-2">Add Product Category</a>
+          </p>
+        </div>
+      </section>
+
+    {% else %}
+      <!-- Buyer Logged-in -->
+      <section class="jumbotron text-center jumbotron-custom">
+        <div class="container">
+          <h1></h1>
+          <h2></h2>
+        </div>
+      </section>
+
+    {% endif %}
+
+  {% else %}
+    <!-- Guest User -->
+    <section class="jumbotron text-center jumbotron-custom">
+      <div class="container">
+        <h1></h1>
+        <h2></h2>
+      </div>
+    </section>
+  {% endif %}
+
+  <!-- Product Grid Section -->
+  <div class="album py-5 bg-light">
+    <div class="container">
+
+      <div class="row">
+
+        {% for product in products %}
+        <div class="col-md-4">
+
+          <!-- Product Card -->
+          <div class="card mb-4 shadow-sm">
+
+            <img class="bd-placeholder-img card-img-top"
+                 src="{{ product.image.url }}"
+                 alt="Thumbnail"
+                 width="100%" height="225">
+
+            <div class="card-body">
+
+              <!-- Product Title -->
+              <h3>{{ product.name }}</h3>
+              <hr>
+
+              <!-- Price Info -->
+              <p>Original Price ₹: {{ product.original_price }}</p>
+              <p style="color: red;">Discount Price ₹: {{ product.discount_percentage }} %</p>
+              <p><b>Selling Price ₹: {{ product.selling_price }}</b></p>
+
+              <hr>
+
+              <!-- Short Description -->
+              <p class="card-text">
+                {{ product.discription | truncatechars:20 }}
+                <a href="{% url 'app:view-product' product.id %}">more</a>
+              </p>
+
+              <!-- Action Buttons -->
+              <div class="d-flex justify-content-between align-items-center">
+
+                <div class="btn-group">
+                  <a href="{% url 'app:view-product' product.id %}" class="btn btn-sm btn-outline-success">View</a>
+                  <a href="{% url 'app:add-to-cart' product.id %}" class="btn btn-sm btn-outline-success">Add To Cart</a>
+
+                  {% if user.is_authenticated and user.id == product.user.id and user.is_seller %}
+                    <a href="{% url 'app:edit-product' product.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                    <a href="{% url 'app:delete-product' product.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                  {% endif %}
+                </div>
+
+                <!-- <small class="text-muted">9 mins</small> -->
+              </div>
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="text-muted">
+  <div class="container">
+    <p class="float-right"><a href="#">Back to top</a></p>
+    <p>&copy; ShopifyApp</p>
+    <p>
+      New to Bootstrap?
+      <a href="/">Visit the homepage</a>
+      or read the
+      <a href="/docs/4.6/getting-started/introduction/">getting started guide</a>.
+    </p>
+  </div>
+</footer>
+
+{% endblock %}
