@@ -83,11 +83,15 @@ WSGI_APPLICATION = 'Shopify.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR/'db.sqlite3',
-        
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'shopifydb',        # database name
+        'USER': 'root',             # mysql username
+        'PASSWORD': 'root', # mysql password
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
+
 
 
 # Password validation
